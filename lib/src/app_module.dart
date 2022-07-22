@@ -12,7 +12,7 @@ import 'modules/user/user_resource.dart';
 class AppModule extends Module {
   @override
   List<Bind<Object>> get binds => [
-        Bind.instance<DotEnvService>(DotEnvService.instance),
+        Bind.singleton<DotEnvService>((i) => DotEnvService()),
         Bind.singleton<RemoteDatabase>((i) => PostgresDatabase(i())),
         Bind.singleton<BCryptService>((i) => BCryptServiceImp()),
       ];

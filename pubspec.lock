@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  dart_jsonwebtoken:
+    dependency: "direct main"
+    description:
+      name: dart_jsonwebtoken
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.4.1"
   file:
     dependency: transitive
     description:
@@ -211,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.6.1"
   pool:
     dependency: transitive
     description:
@@ -259,7 +273,7 @@ packages:
       name: shelf_modular
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-dev.4"
+    version: "2.0.0"
   shelf_packages_handler:
     dependency: transitive
     description:
