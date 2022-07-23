@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:backend/src/utils/to_query_extension.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
@@ -38,7 +39,7 @@ class UserResource extends Resource {
     final database = injector.get<RemoteDatabase>();
     final result = await database.query(
       '''
-      SELECT id, name, email, role, password
+      SELECT id, name, email, role
       FROM "User" WHERE id = @id;
       '''
           .toQuery(),
@@ -116,6 +117,3 @@ class UserResource extends Resource {
   }
 }
 
-extension ToQuery on String {
-  String toQuery() => replaceAll("\n", " ");
-}
