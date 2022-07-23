@@ -1,6 +1,7 @@
-import 'package:backend/src/core/services/dot_env/dot_env_service.dart';
-import 'package:backend/src/core/services/jwt/jwt_service.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+
+import '../../dot_env/dot_env_service.dart';
+import '../jwt_service.dart';
 
 class JWTServiceImp implements JWTService {
   final DotEnvService dotEnvService;
