@@ -7,10 +7,39 @@ servers:
   - url: http://localhost:8080
     description: Local server
 tags:
+  - name: "Auth"
+    description: "Access to auth"
   - name: "User"
     description: "Access to user"
 
 paths:
+  /auth/login:
+    get:
+      tags:
+        - "Auth"
+      description: "Login with credentials"
+      summary: "Login with credentials"
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
   /user/{id}:
     get:
       tags:
@@ -136,7 +165,18 @@ paths:
                 $ref: "#/components/schemas/BackendException"
 
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
+    Tokens: 
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
     User:
       type: object
       properties:
