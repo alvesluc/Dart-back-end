@@ -9,13 +9,14 @@ import '../../core/services/database/remote_database.dart';
 import '../../core/services/jwt/jwt_service.dart';
 import '../../core/services/request_extractor/request_extractor.dart';
 import '../../utils/to_query_extension.dart';
+import 'auth/auth_guard.dart';
 
 class AuthResource extends Resource {
   @override
   List<Route> get routes => [
         Route.get('/auth/login', _login),
         Route.get('/auth/refresh_token', _refreshToken),
-        Route.get('/auth/check_token', _checkToken),
+        Route.get('/auth/check_token', _checkToken, middlewares: [AuthGuard()]),
         Route.get('/auth/update_password', _checkToken),
       ];
 
@@ -72,7 +73,8 @@ class AuthResource extends Resource {
   }
 
   FutureOr<Response> _checkToken() {
-    return Response.ok('body');
+    return Response.ok(jsonEncode({'message': true}));
+
   }
 
   FutureOr<Response> _updatePassword() {

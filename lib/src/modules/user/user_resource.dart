@@ -1,21 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:backend/src/utils/to_query_extension.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
 import '../../core/services/bcrypt/bcrypt_service.dart';
 import '../../core/services/database/remote_database.dart';
+import '../../utils/to_query_extension.dart';
+import '../auth/auth/auth_guard.dart';
 
 class UserResource extends Resource {
   @override
   List<Route> get routes => [
-        Route.get('/user', _getAllUsers),
-        Route.get('/user/:id', _getUserById),
+        Route.get('/user', _getAllUsers, middlewares: [AuthGuard()]),
+        Route.get('/user/:id', _getUserById, middlewares: [AuthGuard()]),
         Route.post('/user', _createUser),
-        Route.put('/user', _updateUser),
-        Route.delete('/user/:id', _deleteUser)
+        Route.put('/user', _updateUser, middlewares: [AuthGuard()]),
+        Route.delete('/user/:id', _deleteUser, middlewares: [
+          AuthGuard(roles: ['ADMIN']),
+        ]),
       ];
 
   FutureOr<Response> _getAllUsers(Injector injector) async {
@@ -116,4 +119,3 @@ class UserResource extends Resource {
     return Response.ok('[DELETED] user: ${arguments.params['id']}');
   }
 }
-

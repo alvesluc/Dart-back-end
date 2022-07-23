@@ -17,7 +17,6 @@ paths:
     get:
       tags:
         - "Auth"
-      description: "Login with credentials"
       summary: "Login with credentials"
       security:
         - basicAuth: []
@@ -40,12 +39,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BackendException"
+  /auth/check_token:
+    get:
+      tags:
+        - "Auth"
+      summary: "Check Bearer token"
+      security: 
+        - bearerAuth: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:  
+                type: object 
+                properties:
+                  message:
+                    type: string
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
   /user/{id}:
     get:
       tags:
         - "User"
-      description: "Get user by id"
       summary: "Get user by id"
+      security: 
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -68,8 +97,9 @@ paths:
     delete:
       tags:
         - "User"
-      description: "Get user by id"
-      summary: "Get user by id"
+      summary: "Delete user by id"
+      security: 
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -96,8 +126,9 @@ paths:
     get:
       tags:
         - "User"
-      description: "Get all users"
       summary: "Get all users"
+      security: 
+        - bearerAuth: []
       responses:
         "200":
           description: ""
@@ -116,7 +147,6 @@ paths:
     post:
       tags:
         - "User"
-      description: "Create new user"
       summary: "Create new user"
       requestBody:
         content:
@@ -141,8 +171,9 @@ paths:
     put:
       tags:
         - "User"
-      description: "Update user"
       summary: "Update user"
+      security: 
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -169,8 +200,13 @@ components:
     basicAuth:
       type: http
       scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Auth header (Authorization) Access Token"
   schemas:
-    Tokens: 
+    Tokens:
       type: object
       properties:
         accessToken:
