@@ -10,7 +10,7 @@ class BCryptServiceImp implements BCryptService {
   }
 
   @override
-  bool checkHash(String text, String hash) {
-    return BCrypt.checkpw(text, hash);
+  bool checkHash(String password, String hash) {
+    return BCrypt.checkpw(password, hash);
   }
 }

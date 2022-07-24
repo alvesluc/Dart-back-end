@@ -94,6 +94,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BackendException"
+  /auth/update_password:
+    put:
+      tags:
+        - "Auth"
+      summary: "Refresh Bearer token"
+      security: 
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password: 
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:  
+                type: object 
+                properties:
+                  message:
+                    type: string
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
   /user/{id}:
     get:
       tags:

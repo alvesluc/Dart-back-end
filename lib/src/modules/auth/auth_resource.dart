@@ -18,8 +18,12 @@ class AuthResource extends Resource {
         Route.get('/auth/refresh_token', _refreshToken, middlewares: [
           AuthGuard(isRefreshToken: true),
         ]),
-        Route.get('/auth/check_token', _checkToken, middlewares: [AuthGuard()]),
-        Route.get('/auth/update_password', _checkToken),
+        Route.get('/auth/check_token', _checkToken, middlewares: [
+          AuthGuard(),
+        ]),
+        Route.put('/auth/update_password', _updatePassword, middlewares: [
+          AuthGuard(),
+        ]),
       ];
 
   FutureOr<Response> _login(Request request, Injector injector) async {
@@ -27,8 +31,8 @@ class AuthResource extends Resource {
     final bcrypt = injector.get<BCryptService>();
     final jwt = injector.get<JWTService>();
     final credentials = extractor.getAuthorizationBasic(request);
-
     final database = injector.get<RemoteDatabase>();
+
     final result = await database.query(
       '''
       SELECT id, role, password
@@ -44,7 +48,7 @@ class AuthResource extends Resource {
       ));
     }
 
-    final userMap = result.map((element) => element['User']).first!;
+    final userMap = result.map((e) => e['User']).first!;
 
     if (!bcrypt.checkHash(credentials.password, userMap['password'])) {
       return Response.forbidden(jsonEncode(
@@ -73,11 +77,11 @@ class AuthResource extends Resource {
   FutureOr<Response> _refreshToken(Request request, Injector injector) async {
     final extractor = injector.get<RequestExtractor>();
     final jwt = injector.get<JWTService>();
+    final database = injector.get<RemoteDatabase>();
 
     final token = extractor.getAuthorizationBearer(request);
     var payload = jwt.getPayload(token);
 
-    final database = injector.get<RemoteDatabase>();
     final result = await database.query(
       '''
       SELECT id, role
@@ -87,18 +91,60 @@ class AuthResource extends Resource {
       variables: {'id': payload['id']},
     );
 
-    payload = result.map((element) => element['User']).first!;
+    payload = result.map((e) => e['User']).first!;
     _generateToken(payload, jwt);
 
     return Response.ok(jsonEncode(_generateToken(payload, jwt)));
   }
 
-  FutureOr<Response> _checkToken() {
+  FutureOr<Response> _checkToken() async {
     return Response.ok(jsonEncode({'message': true}));
   }
 
-  FutureOr<Response> _updatePassword() {
-    return Response.ok('body');
+  FutureOr<Response> _updatePassword(
+    Request request,
+    Injector injector,
+    ModularArguments arguments,
+  ) async {
+    final extractor = injector.get<RequestExtractor>();
+    final bcrypt = injector.get<BCryptService>();
+    final jwt = injector.get<JWTService>();
+    final database = injector.get<RemoteDatabase>();
+    final data = arguments.data as Map;
+
+    final token = extractor.getAuthorizationBearer(request);
+    var payload = jwt.getPayload(token);
+
+    final result = await database.query(
+      '''
+      SELECT password
+      FROM "User" WHERE id = @id;
+      '''
+          .toQuery(),
+      variables: {'id': payload['id']},
+    );
+
+    final password = result.map((e) => e['User']).first!['password'];
+
+    if (!bcrypt.checkHash(data['password'], password)) {
+      return Response.forbidden(jsonEncode(
+        {'error': 'Invalid password'},
+      ));
+    }
+
+    await database.query(
+      '''
+      UPDATE "User" SET password=@password
+      WHERE id = @id;
+      '''
+          .toQuery(),
+      variables: {
+        'id': payload['id'],
+        'password': bcrypt.generateHash(data['newPassword']),
+      },
+    );
+
+    return Response.ok(jsonEncode({'message': 'Password updated'}));
   }
 
   int _determineExpiration(Duration duration) {
