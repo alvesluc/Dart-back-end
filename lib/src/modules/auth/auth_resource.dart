@@ -15,7 +15,9 @@ class AuthResource extends Resource {
   @override
   List<Route> get routes => [
         Route.get('/auth/login', _login),
-        Route.get('/auth/refresh_token', _refreshToken),
+        Route.get('/auth/refresh_token', _refreshToken, middlewares: [
+          AuthGuard(isRefreshToken: true),
+        ]),
         Route.get('/auth/check_token', _checkToken, middlewares: [AuthGuard()]),
         Route.get('/auth/update_password', _checkToken),
       ];
@@ -68,13 +70,31 @@ class AuthResource extends Resource {
     };
   }
 
-  FutureOr<Response> _refreshToken() {
-    return Response.ok('body');
+  FutureOr<Response> _refreshToken(Request request, Injector injector) async {
+    final extractor = injector.get<RequestExtractor>();
+    final jwt = injector.get<JWTService>();
+
+    final token = extractor.getAuthorizationBearer(request);
+    var payload = jwt.getPayload(token);
+
+    final database = injector.get<RemoteDatabase>();
+    final result = await database.query(
+      '''
+      SELECT id, role
+      FROM "User" WHERE id = @id;
+      '''
+          .toQuery(),
+      variables: {'id': payload['id']},
+    );
+
+    payload = result.map((element) => element['User']).first!;
+    _generateToken(payload, jwt);
+
+    return Response.ok(jsonEncode(_generateToken(payload, jwt)));
   }
 
   FutureOr<Response> _checkToken() {
     return Response.ok(jsonEncode({'message': true}));
-
   }
 
   FutureOr<Response> _updatePassword() {

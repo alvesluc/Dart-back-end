@@ -8,8 +8,9 @@ import '../../../core/services/request_extractor/request_extractor.dart';
 
 class AuthGuard extends ModularMiddleware {
   final List<String> roles;
+  final bool isRefreshToken;
 
-  AuthGuard({this.roles = const []});
+  AuthGuard({this.roles = const [], this.isRefreshToken = false});
 
   @override
   Handler call(Handler handler, [ModularRoute? route]) {
@@ -25,7 +26,7 @@ class AuthGuard extends ModularMiddleware {
 
       final token = extractor.getAuthorizationBearer(request);
       try {
-        jwt.verifyToken(token, 'accessToken');
+        jwt.verifyToken(token, isRefreshToken ? 'refreshToken' : 'accessToken');
         final payload = jwt.getPayload(token);
         final role = payload['role'] ?? 'user';
 

@@ -68,6 +68,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BackendException"
+  /auth/refresh_token:
+    get:
+      tags:
+        - "Auth"
+      summary: "Refresh Bearer token"
+      security: 
+        - bearerRefreshAuth: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "403":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackendException"
   /user/{id}:
     get:
       tags:
@@ -205,6 +231,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: "Auth header (Authorization) Access Token"
+    bearerRefreshAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Refresh Access Token"
   schemas:
     Tokens:
       type: object
