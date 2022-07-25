@@ -7,7 +7,7 @@ import 'package:shelf_modular/shelf_modular.dart';
 import '../../core/services/bcrypt/bcrypt_service.dart';
 import '../../core/services/database/remote_database.dart';
 import '../../utils/to_query_extension.dart';
-import '../auth/auth/auth_guard.dart';
+import '../auth/guard/auth_guard.dart';
 
 class UserResource extends Resource {
   @override
