@@ -1,268 +1,35 @@
 openapi: 3.0.0
 info:
-  description: "Back-end week API"
-  version: "1.0.10"
-  title: "Back-end week"
+  description: "API da semana do backend"
+  version: "1.0.0"
+  title: "Semana do Backend"
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:4466
     description: Local server
 tags:
-  - name: "Auth"
-    description: "Access to auth"
-  - name: "User"
-    description: "Access to user"
+- name: "Auth"
+  description: "Access to auth"
+- name: "User"
+  description: "Access to User"
 
 paths:
   /auth/login:
-    get:
-      tags:
-        - "Auth"
-      summary: "Login with credentials"
-      security:
-        - basicAuth: []
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Tokens"
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
+    $ref: 'src/auth.yaml#/components/Login'
   /auth/check_token:
-    get:
-      tags:
-        - "Auth"
-      summary: "Check Bearer token"
-      security: 
-        - bearerAuth: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:  
-                type: object 
-                properties:
-                  message:
-                    type: string
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
+    $ref: 'src/auth.yaml#/components/CheckToken'
   /auth/refresh_token:
-    get:
-      tags:
-        - "Auth"
-      summary: "Refresh Bearer token"
-      security: 
-        - bearerRefreshAuth: []
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Tokens"
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
+    $ref: 'src/auth.yaml#/components/RefreshToken'
   /auth/update_password:
-    put:
-      tags:
-        - "Auth"
-      summary: "Refresh Bearer token"
-      security: 
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password: 
-                  type: string
-                newPassword:
-                  type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:  
-                type: object 
-                properties:
-                  message:
-                    type: string
-        "403":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-  /user/{id}:
-    get:
-      tags:
-        - "User"
-      summary: "Get user by id"
-      security: 
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-    delete:
-      tags:
-        - "User"
-      summary: "Delete user by id"
-      security: 
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-  /user:
-    get:
-      tags:
-        - "User"
-      summary: "Get all users"
-      security: 
-        - bearerAuth: []
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-    post:
-      tags:
-        - "User"
-      summary: "Create new user"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserCreate"
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
-    put:
-      tags:
-        - "User"
-      summary: "Update user"
-      security: 
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-        "404":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BackendException"
+    $ref: 'src/auth.yaml#/components/UpdatePassword'
 
+  /user/{id}:
+    $ref: 'src/user.yaml#/components/GetOneOrDelete'
+  /user:
+    $ref: 'src/user.yaml#/components/UserCrud'
+    
 components:
   securitySchemes:
-    basicAuth:
+    basicAuth:   
       type: http
       scheme: basic
     bearerAuth:
@@ -274,49 +41,10 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: "Refresh Access Token"
+      description: "RefreshToken"
   schemas:
-    Tokens:
-      type: object
-      properties:
-        accessToken:
-          type: string
-        refreshToken:
-          type: string
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        role:
-          type: string
-          default: user
-          enum:
-            - "dev"
-            - "admin"
-            - "manager"
-    UserCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        password:
-          type: string
-        email:
-          type: string
-        role:
-          type: string
-          default: user
-          enum:
-            - "dev"
-            - "admin"
-            - "manager"
     BackendException:
-      type: object
+      type: object 
       properties:
-        error:
+        error: 
           type: string
